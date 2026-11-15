@@ -1,0 +1,64 @@
+name: گزارش ایراد
+description: ایرادی در پنل، فروشگاه، سرور یا ربات را گزارش کنید
+title: "[ایراد]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **هشدار:** لینک اشتراک، ایمیل، آدرس IP، اطلاعات پرداخت، شماره کارت یا شماره پیگیری را در این گزارش نفرستید.
+
+        ایراد امنیتی را در Issue عمومی ثبت نکنید. به SECURITY.md مراجعه کنید و از گزارش آسیب‌پذیری خصوصی استفاده کنید.
+  - type: dropdown
+    id: area
+    attributes:
+      label: بخش
+      description: ایراد مربوط به کدام بخش است؟
+      options:
+        - پنل فروشنده
+        - پنل مشتری
+        - منوی مدیریت
+        - فروشگاه
+        - سرور و هسته
+        - ربات تلگرام
+        - سایر
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: شرح ایراد
+      description: ایراد را کوتاه و واضح بنویسید.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: مراحل تکرار
+      description: گام‌به‌گام بنویسید که ایراد چگونه تکرار می‌شود.
+      placeholder: |
+        ۱. ...
+        ۲. ...
+        ۳. ...
+  - type: textarea
+    id: expected_actual
+    attributes:
+      label: رفتار مورد انتظار و رفتار واقعی
+      description: چه انتظاری داشتید و در عمل چه رخ داد؟
+  - type: input
+    id: environment
+    attributes:
+      label: دستگاه، سیستم‌عامل و مرورگر یا برنامه
+      description: مثلاً گوشی اندروید و کروم، یا رایانه و فایرفاکس
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: تصویر
+      description: در صورت امکان یک تصویر پیوست کنید. مراقب باشید اطلاعات حساس در تصویر نباشد.
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: تأیید حریم خصوصی
+      options:
+        - label: تأیید می‌کنم که لینک اشتراک، ایمیل، IP، اطلاعات پرداخت، شماره کارت یا شماره پیگیری در این گزارش نیست.
+          required: true

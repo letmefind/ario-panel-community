@@ -1,0 +1,30 @@
+name: پیشنهاد قابلیت
+description: قابلیت یا بهبود تازه‌ای را پیشنهاد کنید
+title: "[پیشنهاد]: "
+labels: ["feature"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        پیشنهاد خود را کوتاه بنویسید. لینک اشتراک، ایمیل، آدرس IP، اطلاعات پرداخت، شماره کارت یا شماره پیگیری را نفرستید.
+  - type: dropdown
+    id: area
+    attributes:
+      label: بخش
+      options:
+        - پنل فروشنده
+        - پنل مشتری
+        - منوی مدیریت
+        - فروشگاه
+        - سرور و هسته
+        - ربات تلگرام
+        - سایر
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: شرح پیشنهاد
+      description: چه قابلیتی می‌خواهید و چرا مفید است؟
+    validations:
+      required: true

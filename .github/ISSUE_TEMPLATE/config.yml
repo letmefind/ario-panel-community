@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: گزارش ایراد امنیتی
+    url: https://github.com/letmefind/ario-panel-community/security/advisories/new
+    about: ایراد امنیتی را به‌صورت خصوصی از مسیر Security گزارش کنید، نه در Issue عمومی. جزئیات در SECURITY.md آمده است.
