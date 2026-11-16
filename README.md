@@ -39,6 +39,8 @@ Each node runs one core, chosen when the machine is set up: **sing-box** or **Xr
 | Mieru | Yes | — |
 | WireGuard | Yes | — |
 
+OpenVPN is also supported on a RADIUS-based NAS path, with a separate account for each user. It does not run on the sing-box or Xray cores in the table above.
+
 ### Transports for VLESS, VMess, and Trojan
 
 | Transport | VLESS | VMess | Trojan |
@@ -195,7 +197,7 @@ A public install script for VPN machines will be added to this repository later.
 
 هسته‌ها: sing-box و Xray. وایرگارد فقط روی sing-box است. XHTTP و رمزنگاری VLESS به Xray نیاز دارند.
 
-پروتکل‌ها: VLESS (از جمله Reality و Vision)، VMess، Trojan، Shadowsocks (از جمله ۲۰۲۲)، Hysteria و Hysteria2، TUIC نسخهٔ ۵، AnyTLS، SOCKS، HTTP، Naive، Mieru و وایرگارد. انتقال‌های TCP، WebSocket، gRPC، HTTPUpgrade و XHTTP برای VLESS و VMess و Trojan در دسترس است.
+پروتکل‌ها: VLESS (از جمله Reality و Vision)، VMess، Trojan، Shadowsocks (از جمله ۲۰۲۲)، Hysteria و Hysteria2، TUIC نسخهٔ ۵، AnyTLS، SOCKS، HTTP، Naive، Mieru و وایرگارد. OpenVPN نیز از مسیر NAS مبتنی بر RADIUS و با حساب جداگانه برای هر کاربر در دسترس است و روی هسته‌های sing-box یا Xray اجرا نمی‌شود. انتقال‌های TCP، WebSocket، gRPC، HTTPUpgrade و XHTTP برای VLESS و VMess و Trojan در دسترس است.
 
 لینک اشتراک با برنامه‌های رایج کار می‌کند، از جمله Hiddify، sing-box، Clash و Clash Meta، v2rayNG، v2rayN، V2Box، Streisand، Shadowrocket، Quantumult X، Surge، Stash، Loon و Surfboard.
 
