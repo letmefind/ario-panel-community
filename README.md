@@ -1,80 +1,205 @@
+# Ario Panel
+
+[![Website](https://img.shields.io/badge/getario.com-0F766E?style=flat-square)](https://getario.com)
+[![Issues](https://img.shields.io/badge/Issues-bug_reports-blue?style=flat-square)](../../issues/new/choose)
+[![Security](https://img.shields.io/badge/Security-private_report-crimson?style=flat-square)](SECURITY.md)
+
+**A free, hosted VPN subscription panel. Zero logs. White-label shops for every seller. You do not run a server for the panel, and updates are handled for you.**
+
+Website: [getario.com](https://getario.com)
+
+Ario is for people who sell or operate VPN access. Each seller gets a shop under their own name and domain. Customers receive one subscription link that works in ordinary apps, across the protocols and cores below. This public repository introduces the panel and collects bug reports and feature requests. The main panel code remains private.
+
+## Why Ario
+
+- **Zero logs.** Ario does not keep a record of the sites or destinations a customer visits. The panel stores only what is needed to run the service, such as account status, traffic totals, and whether a subscription is online.
+- **White-label for sellers.** Each seller has a separate storefront: display name, logo, colour, and an optional custom domain. That brand is what the customer sees on the shop, the subscription, and the Telegram bot.
+- **No panel server to run.** Sellers and owners use Ario as a hosted service. You do not install or maintain the panel itself.
+- **Updates are handled for you.** Panel updates are applied on the hosted service. You do not patch the panel on your own machine.
+- **Completely free.** Using the panel at [getario.com](https://getario.com) is free.
+
+VPN capacity is separate from the panel. Sellers can use a traffic pool on the owner's nodes, and, where their licence allows it, attach machines of their own. Those machines run the **ario-node** agent and a **sing-box** or **Xray** core.
+
+## Protocols and cores
+
+Each node runs one core, chosen when the machine is set up: **sing-box** or **Xray**. WireGuard runs on sing-box. XHTTP and VLESS encryption need Xray.
+
+| Protocol | sing-box | Xray |
+| --- | :---: | :---: |
+| VLESS | Yes | Yes |
+| VMess | Yes | Yes |
+| Trojan | Yes | Yes |
+| Shadowsocks | Yes | Yes |
+| Hysteria and Hysteria2 | Yes | Yes |
+| TUIC v5 | Yes | — |
+| AnyTLS | Yes | — |
+| SOCKS | Yes | — |
+| HTTP | Yes | — |
+| Naive | Yes | — |
+| Mieru | Yes | — |
+| WireGuard | Yes | — |
+
+### Transports for VLESS, VMess, and Trojan
+
+| Transport | VLESS | VMess | Trojan |
+| --- | :---: | :---: | :---: |
+| TCP | Yes | Yes | Yes |
+| WebSocket | Yes | Yes | Yes |
+| gRPC | Yes | Yes | Yes |
+| HTTPUpgrade | Yes | Yes | Yes |
+| XHTTP | Yes, on Xray | Yes, on Xray | Yes, on Xray |
+
+### Security
+
+| Protocol | None | TLS | Reality |
+| --- | :---: | :---: | :---: |
+| VLESS | Yes | Yes | Yes, on TCP, XHTTP, or gRPC |
+| VMess | Yes | Yes | — |
+| Trojan | — | Yes | Yes, on TCP, XHTTP, or gRPC |
+
+Hysteria, TUIC, and AnyTLS always use TLS. Naive requires TLS. SOCKS and HTTP can run with or without TLS.
+
+Other options the node form supports include:
+
+- VLESS Vision (`xtls-rprx-vision`) and VLESS encryption (on Xray)
+- Encrypted Client Hello (ECH), uTLS fingerprints, certificate pinning, and ALPN
+- Shadowsocks 2022 ciphers, plus obfs, v2ray-plugin, and shadow-tls
+- Hysteria2 salamander obfuscation and port hopping
+- TUIC congestion control (cubic, new Reno, BBR) and UDP relay modes
+- Automatic certificates over HTTP or DNS, or a certificate you supply
+
+## WireGuard and node control
+
+WireGuard is a first-class node type on sing-box, not a side path. The panel issues per-customer peers, reports traffic for each WireGuard user, and can apply a speed limit when the agent on that machine supports it.
+
+On every node, the **ario-node** agent:
+
+- is installed once on the machine and then managed from the panel
+- runs the core you selected, sing-box or Xray
+- reports live machine status back to the panel
+- applies per-user speed limits
+- applies route rules from the panel
+- reports per-user WireGuard traffic
+
+## Subscriptions and clients
+
+A customer gets one subscription link and a QR code. The panel serves the format the app asks for, including:
+
+- Hiddify
+- sing-box
+- Clash and Clash Meta
+- v2rayNG, v2rayN, V2Box, Streisand, Happ, and Foxray
+- Shadowrocket, Quantumult X, Surge, Stash, Loon, Surfboard, and NekoBox
+
+The shop can also offer a one-tap import into those apps. Clients only receive the nodes and features they can actually use.
+
+## Sellers, shops, and traffic
+
+Ario is built as a multi-seller panel. Each seller works in an isolated desk and does not see another seller's customers or shops.
+
+- **White-label shop.** Name, logo, colour, description, and an optional domain of the seller's own.
+- **Traffic pool.** The seller draws traffic from the owner's nodes, assigns it to customer plans, and can return unused traffic when a subscription is cancelled. Extra traffic packages sit on top of that pool.
+- **Seller-owned nodes.** Where the licence allows it, a seller can add their own machines, still managed through the same panel and agent.
+- **Plans.** Ordinary quota plans, or fair-use plans: a monthly high-speed allowance, after which the customer stays online at a lower speed on nodes that can enforce a limit.
+- **More than one subscription per customer**, with usage, remaining traffic, and online status.
+- **Currencies** chosen per shop, a wallet and ledger, gift cards, and extra traffic packages.
+
+Sellers do not host the panel. They use the hosted desk and shop.
+
+## Telegram, help, and languages
+
+Each shop can run a Telegram bot for its customers: bind an account, view subscriptions, copy or scan a config, buy or renew, open a ticket, and set reminders.
+
+The panel also has a knowledge base, an in-panel guide, and a ticketing desk. The interface includes English, Persian, Chinese, Russian, and Swedish.
+
+The shop and the desks are web apps and work in a mobile or desktop browser.
+
+## Account security
+
+- Two-factor authentication (TOTP) with recovery codes
+
+## How it fits together
+
+```mermaid
+flowchart TB
+  subgraph People
+    Owner[Owner]
+    Seller[Seller]
+    Customer[Customer]
+  end
+
+  subgraph Panel["Ario Panel (hosted)"]
+    Admin[Owner admin]
+    Desk[Seller desk]
+    Shop[Seller shop and domain]
+    Bot[Telegram bot]
+    Sub[Subscription API]
+  end
+
+  subgraph Nodes["VPN nodes"]
+    Agent[ario-node agent]
+    Core[sing-box or Xray]
+    Agent --> Core
+  end
+
+  Owner --> Admin
+  Seller --> Desk
+  Seller --> Shop
+  Customer --> Shop
+  Customer --> Bot
+  Customer -->|subscription link| Sub
+  Admin --> Agent
+  Desk --> Agent
+  Sub --> Agent
+  Customer -->|encrypted traffic| Core
+```
+
+## Screenshots
+
+Panel screenshots will be added under [`docs/screenshots/`](docs/screenshots/) after they have been reviewed and sensitive details removed. None are included yet.
+
+## Issues and feature requests
+
+Open a report from [Issues](../../issues) and use one of the forms.
+
+- For a security vulnerability, follow [SECURITY.md](SECURITY.md) and use private vulnerability reporting. Do not file it as a public issue.
+- Do not include subscription links, emails, IP addresses, payment details, card numbers, or tracking numbers.
+
+A public install script for VPN machines will be added to this repository later. Until then, the hosted panel at [getario.com](https://getario.com) is the way to use Ario.
+
+---
+
 # پنل آریو
 
 [![وب‌سایت](https://img.shields.io/badge/getario.com-0F766E?style=flat-square)](https://getario.com)
 [![گزارش ایراد](https://img.shields.io/badge/Issues-گزارش_ایراد-blue?style=flat-square)](../../issues/new/choose)
 [![امنیت](https://img.shields.io/badge/Security-گزارش_خصوصی-crimson?style=flat-square)](SECURITY.md)
 
-**فروش اشتراک با فروشگاه اختصاصی، حسابداری شفاف، و پرداخت کارت‌به‌کارت.**
+**پنل اشتراک رایگان و میزبانی‌شده. بدون ثبت مقصد اتصال. فروشگاه با نام و دامنهٔ خود فروشنده. برای اجرای پنل به سرور نیاز نیست و به‌روزرسانی‌ها برای شما انجام می‌شود.**
 
 سایت: [getario.com](https://getario.com)
 
-این مخزن عمومی برای معرفی پنل آریو، گزارش ایرادها و پیشنهاد قابلیت‌هاست. کد اصلی پنل خصوصی می‌ماند. اسکریپت نصب سرور در مرحلهٔ بعد به همین مخزن افزوده می‌شود.
+این مخزن عمومی برای معرفی پنل آریو، گزارش ایرادها و پیشنهاد قابلیت‌هاست. کد اصلی پنل خصوصی می‌ماند.
 
-کمتر پنلی فروشگاه مستقل برای هر فروشنده، مخزن ترافیک روی سرورهای مالک، پرداخت کارت‌به‌کارت با تأیید رسید در تلگرام، و نمایش تومان را در یک جا جمع کرده است.
+## نکات اصلی
 
-## چرا آریو؟
+- **بدون ثبت لاگ از مقصد اتصال.** سایت‌ها و مقصدهایی که مشتری به آن‌ها وصل می‌شود ذخیره نمی‌شوند. پنل فقط آنچه برای ادارهٔ سرویس لازم است نگه می‌دارد: وضعیت حساب، مجموع مصرف، و آنلاین یا آفلاین بودن اشتراک.
+- **برند فروشنده.** هر فروشنده فروشگاه جداگانه‌ای با نام، نشان، رنگ و در صورت تمایل دامنهٔ خودش دارد. همین برند روی لینک اشتراک و ربات تلگرام دیده می‌شود.
+- **بدون سرور برای خود پنل.** فروشنده و مالک پنل را به‌صورت میزبانی‌شده به کار می‌گیرند و چیزی از پنل را روی سرور خود نصب نمی‌کنند.
+- **به‌روزرسانی با ما.** به‌روزرسانی پنل روی سرویس میزبانی‌شده انجام می‌شود.
+- **کاملاً رایگان.** استفاده از پنل در [getario.com](https://getario.com) رایگان است.
 
-| قابلیت | پنل آریو | پنل معمولی |
-| --- | --- | --- |
-| فروشگاه و دامنهٔ اختصاصی برای هر فروشنده | دارد | معمولاً یک پنل مشترک |
-| مخزن ترافیک روی سرورهای مالک | دارد | محدود یا نیست |
-| سرور خود فروشنده، با سطوح مجوز | دارد | کمتر دیده می‌شود |
-| کارت‌به‌کارت با تأیید رسید در تلگرام و شمارهٔ پیگیری یکتا | دارد | کمتر پنلی چنین امکانی دارد |
-| تومان در کنار ارزهای دیگر | دارد | معمولاً فقط دلار |
-| چند اشتراک برای هر مشتری، با وضعیت آنلاین | دارد | اغلب یک اشتراک |
-| راهنمای فارسی و صفحهٔ دانش | دارد | ترجمهٔ ناقص یا بدون راهنما |
+ظرفیت اتصال جدا از خود پنل است. فروشنده می‌تواند از مخزن ترافیک روی سرورهای مالک سهم بگیرد و اگر مجوزش اجازه دهد، ماشین خودش را هم اضافه کند. روی هر ماشین، عامل **ario-node** و یکی از دو هستهٔ **sing-box** یا **Xray** اجرا می‌شود.
 
-## امکانات
+## هسته، پروتکل و مشتری
 
-### فروشنده و فروشگاه
+هسته‌ها: sing-box و Xray. وایرگارد فقط روی sing-box است. XHTTP و رمزنگاری VLESS به Xray نیاز دارند.
 
-- هر فروشنده فروشگاه و دامنهٔ خودش را دارد و برند فروشگاه روی لینک اشتراک دیده می‌شود.
-- فروشنده از مخزن ترافیک روی سرورهای مالک سهم می‌گیرد و می‌تواند سرور خودش را هم، متناسب با سطح مجوز، اضافه کند.
-- حسابداری فروشنده، کیف پول، و سابقهٔ تراکنش‌ها در میز کار مشخص است.
-- کارت هدیه و بستهٔ حجم اضافه نیز پشتیبانی می‌شود.
+پروتکل‌ها: VLESS (از جمله Reality و Vision)، VMess، Trojan، Shadowsocks (از جمله ۲۰۲۲)، Hysteria و Hysteria2، TUIC نسخهٔ ۵، AnyTLS، SOCKS، HTTP، Naive، Mieru و وایرگارد. انتقال‌های TCP، WebSocket، gRPC، HTTPUpgrade و XHTTP برای VLESS و VMess و Trojan در دسترس است.
 
-### پرداخت و حسابداری
+لینک اشتراک با برنامه‌های رایج کار می‌کند، از جمله Hiddify، sing-box، Clash و Clash Meta، v2rayNG، v2rayN، V2Box، Streisand، Shadowrocket، Quantumult X، Surge، Stash، Loon و Surfboard.
 
-- پرداخت کارت‌به‌کارت با ارسال رسید در تلگرام، شمارهٔ پیگیری یکتا، و به‌روزرسانی زندهٔ وضعیت.
-- درگاه‌های Plisio، Stripe، PayPal، زرین‌پال و زیبال.
-- چند ارز، از جمله تومان، با نرخ قابل به‌روزرسانی.
-
-### سرور و هسته
-
-- پشتیبانی از چند هسته، از جمله sing-box، و پروتکل وایرگارد.
-- نصب و مدیریت روی سرور با ario-node.
-- گزارش مصرف جداگانهٔ هر کاربر وایرگارد، و محدودیت سرعت.
-
-### مشتری و اشتراک
-
-- چند اشتراک برای هر مشتری، با یادداشت قابل ویرایش برای هر اشتراک.
-- نمایش مصرف‌شده، کل و باقی‌مانده، وضعیت آنلاین یا آفلاین، و آخرین اتصال.
-- کد QR قابل اسکن برای لینک اشتراک.
-
-### رابط فارسی و راهنما
-
-- رابط کاربری فارسی‌اول برای فروشنده، مشتری و منوی مدیریت.
-- راهنما و صفحه‌های دانش، بدون نیاز به مستندات پراکنده.
-
-## برای فروشنده‌ها
-
-میز کار فروشنده برای ساخت طرح، مدیریت مشتریان، پیگیری پرداخت‌ها و مشاهدهٔ حساب‌ها طراحی شده است. فروشگاه با برند و دامنهٔ فروشنده به مشتری نمایش داده می‌شود و فروشنده می‌تواند از مخزن ترافیک مالک یا سرور خودش استفاده کند.
-
-## برای مالکان پنل
-
-منوی مدیریت برای دعوت یا تأیید فروشنده‌ها، تخصیص مجوز و ترافیک، مدیریت سرورها و هسته‌ها، و نظارت بر درگاه‌ها و حساب‌ها در نظر گرفته شده است. هر فروشنده فضای کار جداگانه دارد و به پنل دیگران دسترسی ندارد.
-
-## برای مشتریان
-
-مشتری از فروشگاه فروشنده طرح می‌خرد، چند اشتراک را در یک حساب می‌بیند، وضعیت اتصال و مصرف را دنبال می‌کند، و با کد QR یا لینک اشتراک به برنامهٔ خود وصل می‌شود. آموزش‌های پایه در صفحهٔ دانش در دسترس است.
-
-## در راه
-
-موارد زیر هنوز عرضه نشده‌اند و در برنامه هستند:
-
-- ربات تلگرام مشتریان
-- ترانزیت
-- دستیار پشتیبانی هوشمند
+فروشنده در میز کار جداگانه کار می‌کند، طرح و حجم اضافه می‌سازد، و در صورت نیاز از طرح با مصرف منصفانه استفاده می‌کند: سهم سرعت بالا در ماه، و پس از آن ادامهٔ اتصال با سرعت کمتر. ربات تلگرام فروشگاه، صفحهٔ دانش، راهنمای داخل پنل و تیکت پشتیبانی نیز فراهم است. رابط به انگلیسی، فارسی، چینی، روسی و سوئدی در دسترس است. ورود دومرحله‌ای با کدهای بازیابی نیز برای حساب‌ها فراهم است.
 
 ## گزارش ایراد یا پیشنهاد
 
@@ -82,47 +207,3 @@
 
 - برای ایراد امنیتی از [گزارش آسیب‌پذیری خصوصی](SECURITY.md) استفاده کنید و آن را در Issue عمومی ننویسید.
 - در گزارش‌ها لینک اشتراک، ایمیل، آدرس IP، اطلاعات پرداخت، شماره کارت یا شماره پیگیری نفرستید.
-
-## تصاویر
-
-تصاویر رابط پس از بازبینی و حذف اطلاعات حساس در [`docs/screenshots/`](docs/screenshots/) اضافه می‌شوند.
-
----
-
-# Ario Panel
-
-[![Website](https://img.shields.io/badge/getario.com-0F766E?style=flat-square)](https://getario.com)
-[![Issues](https://img.shields.io/badge/Issues-bug_reports-blue?style=flat-square)](../../issues/new/choose)
-[![Security](https://img.shields.io/badge/Security-private_report-crimson?style=flat-square)](SECURITY.md)
-
-**A subscription panel with per-seller shops, clear accounting, and card-to-card payments.**
-
-Website: [getario.com](https://getario.com)
-
-This public repository introduces Ario Panel and collects bug reports and feature requests. The main panel code remains private. The server installer will be added in a later stage.
-
-Few panels combine a separate shop and domain for each seller, a traffic pool on the owner’s servers, card-to-card payment with Telegram receipt review, and Toman alongside other currencies.
-
-## Highlights
-
-- **For sellers:** a dedicated shop and domain, a traffic pool on owner servers, optional seller-owned servers under licence tiers, a wallet and ledger, gift cards, and extra traffic packages.
-- **For owners:** seller onboarding and licences, server and core management (including sing-box and WireGuard via ario-node), and oversight of payments and accounts.
-- **For customers:** multiple subscriptions with remarks, usage and remaining traffic, online/offline status and last connection, scannable QR codes, and Persian knowledge pages.
-
-## Payments
-
-Card-to-card transfers with Telegram receipt approval, unique tracking numbers, and live status updates — plus Plisio, Stripe, PayPal, Zarinpal, and Zibal. Prices can be shown in Toman and other currencies.
-
-## Coming later
-
-These items are planned and not available yet:
-
-- a Telegram assistant for customers
-- transit
-- a smart support assistant
-
-## Issues
-
-Open a report from [Issues](../../issues) and use one of the forms. Report security vulnerabilities privately ([SECURITY.md](SECURITY.md)). Do not include subscription links, emails, IP addresses, payment details, card numbers, or tracking numbers.
-
-Screenshots will be added under [`docs/screenshots/`](docs/screenshots/) after they have been reviewed and sensitive details removed.
